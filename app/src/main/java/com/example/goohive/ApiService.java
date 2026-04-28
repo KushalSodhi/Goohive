@@ -10,12 +10,12 @@ import retrofit2.http.*;
 public interface ApiService {
 
     @Multipart
-    @POST("/upload")
+    @POST("upload")
     Call<Void> uploadFile(@Part MultipartBody.Part file);
 
-    @GET("/files")
+    @GET("files")
     Call<Map<String, List<String>>> getFiles();
 
-    @GET("/delete/{filename}")
+    @GET("delete/{filename}")
     Call<Void> deleteFile(@Path("filename") String filename);
 }
