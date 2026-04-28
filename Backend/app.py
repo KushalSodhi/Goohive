@@ -30,8 +30,10 @@ def delete(filename):
         files.remove(filename)
     return "Deleted"
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
-    @app.route('/')
+@app.route('/')
 def home():
     return "Goohive Backend Running 🚀"
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
