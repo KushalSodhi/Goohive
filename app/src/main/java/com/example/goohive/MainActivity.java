@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         recyclerView = findViewById(R.id.recyclerView);
-        btnUpload = findViewById(R.id.btnUpload);
+        btnUpload = findViewById(R.id.idBtnUpload);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
