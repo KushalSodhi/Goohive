@@ -14,6 +14,13 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,8 +57,7 @@ public class MainActivity extends AppCompatActivity {
                 Uri uri = data.getData();
 
                 InputStream inputStream = getContentResolver().openInputStream(uri);
-
-                File file = new File(getFilesDir(), "file_" + System.currentTimeMillis());
+                File file = new File(getCacheDir(), "upload_" + System.currentTimeMillis());
 
                 FileOutputStream outputStream = new FileOutputStream(file);
 
@@ -65,14 +71,37 @@ public class MainActivity extends AppCompatActivity {
                 outputStream.close();
                 inputStream.close();
 
-                loadLocalFiles();
+                uploadToServer(file);  // 🔥 THIS IS THE KEY LINE
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+    private void uploadToServer(File file) {
+        ApiService apiService = RetrofitClient.getApiService();
 
+        RequestBody requestFile =
+                RequestBody.create(MediaType.parse("multipart/form-data"), file);
+
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+
+        Call<Void> call = apiService.uploadFile(body);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Toast.makeText(MainActivity.this, "Uploaded ✅", Toast.LENGTH_SHORT).show();
+                loadLocalFiles(); // refresh list
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Upload Failed ❌", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
     private void loadLocalFiles() {
         fileList.clear();
 
